@@ -3,11 +3,10 @@ import pytesseract
 from PIL import Image, UnidentifiedImageError
 import io
 import logging
-import os
 
 app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
-pytesseract.pytesseract.tesseract_cmd = r"/usr/bin/tesseract"  # Chemin correct sur Render
+pytesseract.pytesseract.tesseract_cmd = r"/usr/bin/tesseract"
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'bmp', 'tiff'}
 
@@ -36,6 +35,4 @@ def ocr():
         logging.error(f"Erreur lors de l'OCR: {str(e)}")
         return jsonify({"error": "Une erreur est survenue lors du traitement de l'image"}), 500
 
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
+# Suppression totale du bloc if __name__ == '__main__'
