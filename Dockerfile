@@ -1,27 +1,29 @@
 # Base image
 FROM python:3.9-slim
 
-# Mettre à jour les paquets et installer Tesseract
+# Installer les dépendances système
 RUN apt-get update && \
-    apt-get install -y tesseract-ocr && \
-    apt-get install -y poppler-utils && \
-    apt-get install -y libtesseract-dev && \
-    apt-get clean
+    apt-get install -y \
+    tesseract-ocr \
+    poppler-utils \
+    libgl1 \
+    tesseract-ocr-fra \
+    tesseract-ocr-spa && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# Installer les langues supplémentaires pour Tesseract (facultatif)
-RUN apt-get install -y tesseract-ocr-fra tesseract-ocr-spa
-
-# Créer un répertoire pour l'application
+# Créer le répertoire de l'application
 WORKDIR /app
 
-# Copier les fichiers du projet
-COPY . .
+# Copier les fichiers nécessaires
+COPY requirements.txt .
+COPY app.py .
 
 # Installer les dépendances Python
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Exposer le port 8000 (par défaut utilisé par Render)
-EXPOSE 8000
+# Exposer le port (utilisé par Render)
+EXPOSE $PORT
 
-# Démarrer l'application avec Gunicorn
-CMD ["gunicorn", "--workers=3", "--bind", ":8000", "app:app"]
+# Commande de démarrage avec variable d'environnement Render
+CMD gunicorn --workers=3 --bind 0.0.0.0:${PORT:-8000} --timeout 120 app:app
