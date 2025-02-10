@@ -3,6 +3,7 @@ import pytesseract
 from PIL import Image, UnidentifiedImageError
 import io
 import logging
+import os
 
 # Initialisation de l'application Flask
 app = Flask(__name__)
@@ -52,4 +53,5 @@ def ocr():
 
 # Démarrer l'application Flask en mode debug (seulement pour le développement local)
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
